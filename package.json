@@ -1,0 +1,15 @@
+{
+  "name": "camrec",
+  "version": "1.0.0",
+  "description": "主/备摄像头分段录制页面：故障接管、时间缺口清单、本地媒体管理",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "serve": "node tools/serve.mjs",
+    "test": "node --test test/",
+    "e2e": "node e2e/takeover.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}

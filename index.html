@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分段相机录制 · 主备接管</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>分段相机录制 <span class="badge-local">仅本地保存 · 不上传媒体</span></h1>
+  <p class="sub">主设备断开 / 轨道静音 / 权限失效时，当前片段立即结束并记录时间缺口；备设备可用时从新片段继续，绝不拼接伪装。</p>
+</header>
+
+<main>
+  <section class="panel" id="devicePanel">
+    <h2>设备</h2>
+    <div class="row">
+      <label>主摄像头
+        <select id="primarySel"></select>
+      </label>
+      <button id="previewPrimaryBtn" type="button">预览</button>
+      <label>备摄像头
+        <select id="backupSel"></select>
+      </label>
+      <button id="previewBackupBtn" type="button">预览</button>
+    </div>
+    <div class="row">
+      <button id="refreshBtn" type="button">刷新设备列表</button>
+      <button id="permBtn" type="button">申请相机权限</button>
+      <label class="inline"><input type="checkbox" id="audioChk"> 包含音频</label>
+      <label class="inline">持有上限(MB)
+        <input type="number" id="maxMbInput" value="256" min="16" max="4096" step="16">
+      </label>
+      <span id="permState" class="muted"></span>
+    </div>
+    <div class="row videos">
+      <figure><video id="previewPrimary" autoplay playsinline muted></video><figcaption>主预览</figcaption></figure>
+      <figure><video id="previewBackup" autoplay playsinline muted></video><figcaption>备预览</figcaption></figure>
+      <figure><video id="recView" autoplay playsinline muted></video><figcaption>当前录制画面</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="panel" id="controlPanel">
+    <h2>录制控制</h2>
+    <div class="row">
+      <button id="startBtn" type="button" class="primary">开始录制</button>
+      <button id="switchBtn" type="button" disabled>切换到另一台</button>
+      <button id="resumeBtn" type="button" disabled>恢复录制</button>
+      <button id="stopBtn" type="button" disabled>停止</button>
+      <span id="stateBadge" class="state idle">空闲</span>
+      <span id="sessionClock" class="muted"></span>
+    </div>
+    <div class="row">
+      <div class="meter"><div id="sizeBar"></div></div>
+      <span id="sizeText" class="muted">0 B / 256 MB</span>
+    </div>
+  </section>
+
+  <section class="panel" id="segmentPanel">
+    <h2>片段 <span id="segCount" class="muted"></span></h2>
+    <table id="segTable">
+      <thead>
+        <tr><th>#</th><th>设备</th><th>开始</th><th>结束</th><th>时长</th><th>大小</th><th>结束原因</th><th>状态</th><th>丢弃迟到块</th><th>操作</th></tr>
+      </thead>
+      <tbody id="segTbody"></tbody>
+    </table>
+    <video id="player" controls playsinline></video>
+  </section>
+
+  <section class="panel" id="gapPanel">
+    <h2>时间缺口</h2>
+    <table id="gapTable">
+      <thead><tr><th>前一片段</th><th>后一片段</th><th>原因</th><th>开始</th><th>结束</th><th>缺口时长</th></tr></thead>
+      <tbody id="gapTbody"></tbody>
+    </table>
+  </section>
+
+  <section class="panel" id="exportPanel">
+    <h2>清单与导出</h2>
+    <div class="row">
+      <button id="exportManifestBtn" type="button">导出清单 JSON</button>
+      <button id="exportAllBtn" type="button">导出全部片段 + 清单</button>
+      <button id="clearBtn" type="button" class="danger">清除全部（撤销对象 URL）</button>
+    </div>
+    <details>
+      <summary>实时清单预览</summary>
+      <pre id="manifestJson">{}</pre>
+    </details>
+  </section>
+
+  <section class="panel" id="logPanel">
+    <h2>事件日志</h2>
+    <div id="log" class="log"></div>
+  </section>
+</main>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
